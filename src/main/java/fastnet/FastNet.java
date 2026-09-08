@@ -10,6 +10,8 @@ import java.util.concurrent.CompletableFuture;
 
 /** Asynchronous network facade with a portable Java fallback. */
 public final class FastNet {
+    private static final DatagramChannel UDP_CHANNEL = openDatagramChannel();
+
     private FastNet() {
     }
 
@@ -31,12 +33,22 @@ public final class FastNet {
         Objects.requireNonNull(payload, "payload");
         ByteBuffer copy = payload.asReadOnlyBuffer();
         return CompletableFuture.supplyAsync(() -> {
-            try (DatagramChannel channel = DatagramChannel.open()) {
-                return channel.send(copy, new InetSocketAddress(host, port));
+            try {
+                synchronized (UDP_CHANNEL) {
+                    return UDP_CHANNEL.send(copy, new InetSocketAddress(host, port));
+                }
             } catch (IOException exception) {
                 throw new NetworkException("UDP send failed", exception);
             }
         });
+    }
+
+    private static DatagramChannel openDatagramChannel() {
+        try {
+            return DatagramChannel.open();
+        } catch (IOException exception) {
+            throw new ExceptionInInitializerError(exception);
+        }
     }
 
     public static final class NetworkException extends RuntimeException {
