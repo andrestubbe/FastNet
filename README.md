@@ -97,6 +97,18 @@ FastNet includes a local UDP benchmark to expose transport overhead before the n
 
 ---
 
+## Measured Benchmark Run
+
+The verified local telemetry benchmark completed **100 UDP packets in 77,006 ms** on this Windows workstation; the result includes local socket and asynchronous completion overhead.
+
+```text
+run-benchmark.bat -> fastnet.UdpThroughputBenchmark
+```
+
+Native IOCP and zero-copy measurements must be collected separately after the Windows backend is enabled.
+
+---
+
 ## API Quick Reference
 
 | Method | Description |
