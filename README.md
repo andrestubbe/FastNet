@@ -63,6 +63,13 @@ Standard blocking networking creates thread pressure and makes high-frequency se
 - **Direct-buffer boundary**: Payloads can be supplied as `ByteBuffer` values without changing caller state.
 - **Native-ready transport**: WinSock2 and IOCP can replace the portable fallback behind the same API.
 
+| Feature | java.net (Socket / Datagram) | Netty (NIO Transport) | FastNet |
+|:---|:---|:---|:---|
+| **I/O Model** | Blocking I/O (Thread-per-connection) | Heavy EventLoop channel graph | **Lightweight asynchronous completion** |
+| **Native Transport** | POSIX / Win32 libc wrapper | JNI Epoll / KQueue (Linux/macOS) | **Windows WinSock2 + IOCP native ready**|
+| **Buffer Handling** | Intermediate heap byte arrays | ByteBuf retain/release counts | **Direct ByteBuffer boundary (zero-copy)**|
+| **GC / Allocation Footprint**| High stream wrapper churn | Moderate object allocations | **Zero GC payload submission** |
+
 ---
 
 ## Features
